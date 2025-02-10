@@ -1,30 +1,31 @@
 import Tetracube from "./Tetracube";
 import {
   mergeTetroMatrices,
-  rotateTetroMatrixClockwise,
+  rotateTetroMatrix,
   TetroMatrix,
 } from "../types/TetroMatrix";
 import {
-  TetrominoDefinitions,
+  getTetrominoMatrix,
   TetrominoTypeAndPosition,
 } from "../types/Tetromino";
 
 export default function GameBoard(props: {
   matrix: TetroMatrix;
   currentTetro?: TetrominoTypeAndPosition;
-  previewTetro?: TetrominoTypeAndPosition;
+  ghostTetro?: TetrominoTypeAndPosition;
   fullLines?: number[];
   hideGrid?: boolean;
 }) {
   let currentTetroMatrix: TetroMatrix | undefined = undefined;
-  let previewTetroMatrix: TetroMatrix | undefined = undefined;
+  let ghostTetroMatrix: TetroMatrix | undefined = undefined;
   let mergedMatrix: TetroMatrix;
   const previewCellIndexes: number[] = [];
 
   if (props.currentTetro) {
-    currentTetroMatrix = rotateTetroMatrixClockwise(
-      TetrominoDefinitions[props.currentTetro.type].matrix,
+    currentTetroMatrix = rotateTetroMatrix(
+      getTetrominoMatrix(props.currentTetro.type),
       props.currentTetro.rotation,
+      "right",
     );
 
     mergedMatrix = mergeTetroMatrices(
@@ -36,21 +37,21 @@ export default function GameBoard(props: {
     mergedMatrix = props.matrix;
   }
 
-  if (props.previewTetro) {
-    previewTetroMatrix = rotateTetroMatrixClockwise(
-      TetrominoDefinitions[props.previewTetro.type].matrix,
-      props.previewTetro.rotation,
+  if (props.ghostTetro) {
+    ghostTetroMatrix = rotateTetroMatrix(
+      getTetrominoMatrix(props.ghostTetro.type),
+      props.ghostTetro.rotation,
+      "right",
     );
 
-    for (const [i, color] of previewTetroMatrix.cells.entries()) {
+    for (const [i, color] of ghostTetroMatrix.cells.entries()) {
       if (color === "clear") {
         continue;
       }
 
-      const boardX: number =
-        props.previewTetro.x + (i % previewTetroMatrix.width);
+      const boardX: number = props.ghostTetro.x + (i % ghostTetroMatrix.width);
       const boardY: number =
-        props.previewTetro.y + Math.floor(i / previewTetroMatrix.width);
+        props.ghostTetro.y + Math.floor(i / ghostTetroMatrix.width);
 
       const boardIndex: number = boardY * mergedMatrix.width + boardX;
 
@@ -61,8 +62,8 @@ export default function GameBoard(props: {
 
     mergedMatrix = mergeTetroMatrices(
       mergedMatrix,
-      previewTetroMatrix,
-      props.previewTetro,
+      ghostTetroMatrix,
+      props.ghostTetro,
     );
   }
 
@@ -90,7 +91,7 @@ export default function GameBoard(props: {
                 <Tetracube
                   key={colIdx}
                   color={color}
-                  faded={previewCellIndexes.includes(
+                  ghost={previewCellIndexes.includes(
                     rowIdx * mergedMatrix.width + colIdx,
                   )}
                 />

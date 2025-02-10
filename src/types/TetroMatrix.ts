@@ -1,9 +1,9 @@
-import assertNever from "../utils/assertNever";
 import {
+  getTetrominoMatrix,
   randomTetrominoColor,
   TetrominoColor,
-  TetrominoDefinitions,
   TetrominoRotation,
+  TetrominoRotationDirection,
   TetrominoType,
 } from "./Tetromino";
 
@@ -13,9 +13,10 @@ export type TetroMatrix = {
   cells: (TetrominoColor | "clear")[];
 };
 
-export function rotateTetroMatrixClockwise(
+export function rotateTetroMatrix(
   matrix: TetroMatrix,
   rotations: TetrominoRotation,
+  direction: TetrominoRotationDirection,
 ): TetroMatrix {
   if (rotations === 0) {
     return matrix;
@@ -26,27 +27,39 @@ export function rotateTetroMatrixClockwise(
       ? initTetroMatrix(matrix.width, matrix.height)
       : initTetroMatrix(matrix.height, matrix.width);
 
-  matrix.cells.forEach((cell, index) => {
-    const x = index % matrix.width;
-    const y = Math.floor(index / matrix.width);
-
-    let newX: number;
-    let newY: number;
-    if (rotations === 1) {
-      newX = matrix.height - y - 1;
-      newY = x;
-    } else if (rotations === 2) {
-      newX = matrix.width - x - 1;
-      newY = matrix.height - y - 1;
-    } else if (rotations === 3) {
-      newX = y;
-      newY = matrix.width - x - 1;
-    } else {
-      assertNever(rotations);
+  switch (direction) {
+    case "right": {
+      for (let y = 0; y < matrix.height; y++) {
+        for (let x = 0; x < matrix.width; x++) {
+          const newX = matrix.height - 1 - y;
+          const newY = x;
+          newMatrix.cells[newY * newMatrix.width + newX] =
+            matrix.cells[y * matrix.width + x];
+        }
+      }
+      break;
     }
+    case "left": {
+      for (let y = 0; y < matrix.height; y++) {
+        for (let x = 0; x < matrix.width; x++) {
+          const newX = y;
+          const newY = matrix.width - 1 - x;
+          newMatrix.cells[newY * newMatrix.width + newX] =
+            matrix.cells[y * matrix.width + x];
+        }
+      }
+      break;
+    }
+  }
 
-    newMatrix.cells[newY * newMatrix.width + newX] = cell;
-  });
+  if (rotations > 1) {
+    return rotateTetroMatrix(
+      newMatrix,
+      (rotations - 1) as TetrominoRotation,
+      direction,
+    );
+  }
+
   return newMatrix;
 }
 
@@ -68,7 +81,7 @@ export function initPreviewTetroMatrix(type?: TetrominoType): TetroMatrix {
     return initTetroMatrix(3, 4);
   }
 
-  const matrix = TetrominoDefinitions[type].matrix;
+  const matrix = getTetrominoMatrix(type);
   return mergeTetroMatrices(initTetroMatrix(3, 4), matrix, {
     x: 0,
     y: 0,

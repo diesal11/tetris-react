@@ -9,12 +9,12 @@ export default function TetrisGameContainer() {
   const savedTetroMatrix = initPreviewTetroMatrix(state.savedTetromino);
   const previewMatrixes = state.upcomingTetrominos.map(initPreviewTetroMatrix);
 
-  let fallPreviewTetromino: TetrominoTypeAndPosition | undefined = undefined;
+  let fallGhostTetromino: TetrominoTypeAndPosition | undefined = undefined;
   if (state.currentTetromino) {
-    fallPreviewTetromino = {
+    fallGhostTetromino = {
       type: state.currentTetromino.type,
       x: state.currentTetromino.x,
-      y: state.currentTetromino.estimatedDropY,
+      y: state.currentTetromino.ghostY,
       rotation: state.currentTetromino.rotation,
     };
   }
@@ -41,16 +41,24 @@ export default function TetrisGameContainer() {
               <GameBoard matrix={savedTetroMatrix} />
             </div>
 
-            {/* <div className="rounded-2xl bg-slate-300 p-6">
-              <h1 className="text-center font-bold">Score: 1000</h1>
-            </div> */}
+            <div className="rounded-2xl bg-slate-300 p-6">
+              <h1 className="text-center font-bold">
+                Level: {state.score.level}
+              </h1>
+              <h1 className="text-center font-bold">
+                Score: {state.score.score}
+              </h1>
+              <h1 className="text-center font-bold">
+                Lines Cleared: {state.score.totalLinesCleared}
+              </h1>
+            </div>
           </div>
 
           <div className="rounded-2xl bg-slate-300 p-6">
             <GameBoard
               matrix={state.gameBoardMatrix}
               currentTetro={state.currentTetromino}
-              previewTetro={fallPreviewTetromino}
+              ghostTetro={fallGhostTetromino}
               fullLines={state.fullLinesState?.lines}
             />
           </div>

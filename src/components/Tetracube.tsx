@@ -2,7 +2,7 @@ import { TetrominoColor } from "../types/Tetromino";
 
 export default function Tetracube(props: {
   color: TetrominoColor | "clear";
-  faded?: boolean;
+  ghost?: boolean;
 }) {
   const colorVariants = {
     cyan: "bg-cyan-500 border-t-cyan-300 border-l-cyan-300 border-r-cyan-700 border-b-cyan-700",
@@ -19,12 +19,12 @@ export default function Tetracube(props: {
     clear: "border-white",
   };
 
-  const fadedStyle = props.faded ? "opacity-50" : "";
+  const ghostStyle = props.ghost ? "opacity-50" : "";
 
   return (
     <div className="h-6 w-6 border-white bg-white">
       <div
-        className={`h-6 w-6 border-4 ${fadedStyle} ${colorVariants[props.color]}`}
+        className={`h-6 w-6 border-4 ${ghostStyle} ${colorVariants[props.color]}`}
       />
     </div>
   );

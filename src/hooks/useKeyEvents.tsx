@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-const useKeyPress = (
+const useKeyEvents = (
   keys: string[],
   handler: (event: KeyboardEvent) => void,
   repeatDelay = 0,
@@ -43,4 +43,4 @@ const useKeyPress = (
   }, [repeatDelay]);
 };
 
-export default useKeyPress;
+export default useKeyEvents;
