@@ -24,7 +24,14 @@ Built with:
 
 Future features:
 
-- [ ] Score
-- [ ] Levels?
+- [x] Score (Double check this is correct?)
+- [x] Levels
+- [x] Implement "Super Rotation System" rules - https://tetris.fandom.com/wiki/SRS
+  - [x] On Ground "Hold" physics logic
+  - [x] Verify i rotate correctly - from the center of the piece
+  - [x] Wall Kick
+  - [x] Floor Kick
+- [x] Handle keyboard & tick logic ourselves
+- [ ] Mobile controls & viewport
 - [ ] Sound FX / Music
 - [ ] Online Leaderboard, allowing submissions from any client
