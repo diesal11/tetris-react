@@ -14,6 +14,7 @@ Built with:
 
 - [React 19 + Compiler](https://react.dev) (Goodbye useMemo!)
 - [Vite](https://vite.dev) for the build system
+- [React Three Fiber](https://r3f.docs.pmnd.rs) + [Three.js](https://threejs.org) for the WebGL-rendered 3D boards
 - [TailwindCSS](https://tailwindcss.com) for basic CSS styling & animations
 - [Immer](https://immerjs.github.io/immer) for immutable state updates
 - [Prettier](https://prettier.io) for code formatting

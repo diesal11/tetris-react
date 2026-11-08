@@ -21,8 +21,8 @@ There is no test suite or test runner configured.
 
 ## Stack notes
 
-- React 19 RC with the **React Compiler** (`babel-plugin-react-compiler`, wired in `vite.config.ts`). Don't add `useMemo`/`useCallback` for memoization — avoiding them is an explicit goal of the project.
-- TailwindCSS for all styling/animation; no CSS modules.
+- React 19 with the **React Compiler** (`babel-plugin-react-compiler`, wired in `vite.config.ts`). Don't add `useMemo`/`useCallback` for memoization — avoiding them is an explicit goal of the project.
+- TailwindCSS for UI styling; no CSS modules. Boards are drawn with WebGL via React Three Fiber (`three`, `@react-three/fiber`, `@react-three/drei`). Fiber 9 caps React below 19.4, so check its peer range before bumping React.
 
 ## Architecture
 
@@ -40,4 +40,7 @@ The game logic is a pure, framework-free state machine in `src/tetris/`, driven 
 
 **Rotation (SRS).** `types/Tetromino.ts` holds SRS piece definitions; `types/TetroRotationBump.ts` holds the wall/floor-kick offset tables (separate tables for I, O, and the standard JLSTZ). `handleRotate` tries each kick offset in order and applies the first one that fits.
 
-**Rendering.** `containers/TetrisGameContainer.tsx` derives the view (ghost piece, held/preview matrices, title) from state; `components/GameBoard.tsx` renders any `TetroMatrix` with optional overlaid current/ghost pieces and full-line highlighting, and is reused for the main board, hold box and previews.
+**Rendering.** `containers/TetrisGameContainer.tsx` turns state into `BoardView`s with `tetris/boardView.ts` (`computeBoardView`): a flat list of filled cells, each tagged `ghost`/`fullLine`, with the current piece and ghost merged in. Each board (playfield, hold box, previews) is a `components/three/Board3D.tsx`, which renders a drei `<View>` placeholder div in the normal Tailwind layout. A single transparent, fixed, full-viewport `<Canvas>` (`components/three/SceneCanvas.tsx`, `View.Port`) draws every view into its div's screen rectangle, so there is one WebGL context.
+- Cells are drawn with three `InstancedMesh`es per board (solid / ghost / line-clear flash), updated imperatively in a `useLayoutEffect`. Board (x, y-down) maps to world `(x - (w-1)/2, (h-1)/2 - y, 0)`.
+- The canvas uses `frameloop="demand"`, so imperative scene changes must call `invalidate()`. The line-clear pulse keeps calling `invalidate()` from `useFrame` while `flashing`.
+- Geometry and materials are module-level singletons in `components/three/materials.ts`, shared by every board, so meshes use `dispose={null}`.
