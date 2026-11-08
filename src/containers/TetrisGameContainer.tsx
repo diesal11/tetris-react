@@ -1,5 +1,6 @@
 import Board3D from "../components/three/Board3D";
 import SceneCanvas from "../components/three/SceneCanvas";
+import Title3D from "../components/three/Title3D";
 import { computeBoardView } from "../tetris/boardView";
 import useTetrisGameState from "../hooks/useTetrisGameState";
 import { initPreviewTetroMatrix } from "../types/TetroMatrix";
@@ -48,9 +49,7 @@ export default function TetrisGameContainer() {
     <>
       <SceneCanvas dimmed={isPaused} />
       <div className="flex flex-col gap-5">
-        <h1 className="bg-gradient-to-r from-red-500 to-violet-500 bg-clip-text text-center text-4xl font-bold text-transparent">
-          {titleText}
-        </h1>
+        <Title3D text={titleText} />
         <div className={`flex items-start gap-5 ${opacity}`}>
           <div className="flex flex-col justify-between gap-5">
             <div className="flex flex-col items-center gap-2 rounded-2xl bg-slate-300 p-6">
