@@ -4,20 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-Package manager is **pnpm** (pinned via `packageManager` in `package.json`).
+Package manager is **Bun** (pinned via `packageManager` in `package.json`; lockfile is `bun.lock`). Bun is only the package manager/script runner — the app is still built and served by Vite.
 
-- `pnpm install` — install dependencies
-- `pnpm dev` — Vite dev server
-- `pnpm build` — type-check (`tsc -b`) then production build to `dist/`
-- `pnpm lint` — ESLint (flat config in `eslint.config.js`)
-- `pnpm preview` — serve the production build
-- `pnpm exec prettier --write .` — format (uses `prettier-plugin-tailwindcss` to sort class names)
+- `bun install` — install dependencies
+- `bun run dev` — Vite dev server
+- `bun run build` — type-check (`tsc -b`) then production build to `dist/`
+- `bun run lint` — ESLint (flat config in `eslint.config.js`)
+- `bun run preview` — serve the production build
+- `bunx prettier --write .` — format (uses `prettier-plugin-tailwindcss` to sort class names)
 
 There is no test suite or test runner configured.
 
 ### Deployment (`cdk/`)
 
-`cdk/` is a separate pnpm package with its own lockfile. It defines two stacks in `cdk/lib/cdk-stack.ts`: `TetrisReactCertificateStack` (ACM cert, must be `us-east-1` for CloudFront) and `TetrisReactStack` (private S3 bucket + CloudFront with OAC + Route53 A/AAAA records for `tetris-react.dlundy.au`, in `ap-southeast-2`), linked via `crossRegionReferences`. The stack does not upload the site — `dist/` must be synced to the bucket separately. Run CDK commands from `cdk/` (e.g. `pnpm cdk diff`, `pnpm cdk deploy`).
+`cdk/` is a separate Bun package with its own `bun.lock`. It defines two stacks in `cdk/lib/cdk-stack.ts`: `TetrisReactCertificateStack` (ACM cert, must be `us-east-1` for CloudFront) and `TetrisReactStack` (private S3 bucket + CloudFront with OAC + Route53 A/AAAA records for `tetris-react.dlundy.au`, in `ap-southeast-2`), linked via `crossRegionReferences`. The stack does not upload the site — `dist/` must be synced to the bucket separately. Run CDK commands from `cdk/` (e.g. `bun run cdk diff`, `bun run cdk deploy`).
 
 ## Stack notes
 

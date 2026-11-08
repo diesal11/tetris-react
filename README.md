@@ -19,7 +19,7 @@ Built with:
 - [Prettier](https://prettier.io) for code formatting
 - [ESLint](https://eslint.org) for code linting
 - [TypeScript](https://typescriptlang.org)
-- [PNPM](https://pnpm.io) for package management
+- [Bun](https://bun.sh) for package management
 - [CDK](https://aws.amazon.com/cdk) for deployment to AWS
 
 Future features:
