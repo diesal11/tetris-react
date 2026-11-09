@@ -23,6 +23,14 @@ type Board3DProps = {
   cellPx?: number;
   /** Pulse the cells on completed lines. */
   flashing?: boolean;
+  /**
+   * Fixed size in cells for the view, camera and instance capacity. Defaults
+   * to the view's own size; set it when the view's size varies (e.g. trimmed
+   * preview pieces) so the box stays put and the cells are centred in it.
+   */
+  frame?: { width: number; height: number };
+  /** Draw the dark backplate and grid behind the cells. */
+  showBackplate?: boolean;
 };
 
 /**
@@ -33,25 +41,37 @@ export default function Board3D({
   view,
   cellPx = 28,
   flashing = false,
+  frame = view,
+  showBackplate = true,
 }: Board3DProps) {
-  const widthPx = (view.width + BOARD_MARGIN) * cellPx;
-  const heightPx = (view.height + BOARD_MARGIN) * cellPx;
+  const widthPx = (frame.width + BOARD_MARGIN) * cellPx;
+  const heightPx = (frame.height + BOARD_MARGIN) * cellPx;
 
   return (
     <View style={{ width: widthPx, height: heightPx }}>
-      <BoardScene view={view} aspect={widthPx / heightPx} flashing={flashing} />
+      <BoardScene
+        view={view}
+        frame={frame}
+        aspect={widthPx / heightPx}
+        flashing={flashing}
+        showBackplate={showBackplate}
+      />
     </View>
   );
 }
 
 function BoardScene(props: {
   view: BoardView;
+  frame: { width: number; height: number };
   aspect: number;
   flashing: boolean;
+  showBackplate: boolean;
 }) {
-  const { view, aspect, flashing } = props;
+  const { view, frame, aspect, flashing, showBackplate } = props;
+  // Cells are centred using the view's own size; the frame sets the camera
+  // and capacity, so a smaller view sits in the middle of the frame.
   const { width, height } = view;
-  const capacity = width * height;
+  const capacity = frame.width * frame.height;
 
   const invalidate = useThree((state) => state.invalidate);
   const cameraRef = useRef<THREE.PerspectiveCamera>(null);
@@ -60,10 +80,10 @@ function BoardScene(props: {
   const flashRef = useRef<THREE.InstancedMesh>(null);
 
   // Frame the whole board, looking up at it slightly from below.
-  const halfHeight = (height + BOARD_MARGIN) / 2;
+  const halfHeight = (frame.height + BOARD_MARGIN) / 2;
   const distance =
     (halfHeight * 1.04) / Math.tan(((CAMERA_FOV / 2) * Math.PI) / 180);
-  const cameraY = -height * 0.12;
+  const cameraY = -frame.height * 0.12;
 
   useLayoutEffect(() => {
     const camera = cameraRef.current;
@@ -74,8 +94,6 @@ function BoardScene(props: {
     camera.updateProjectionMatrix();
     invalidate();
   }, [aspect, distance, cameraY, invalidate]);
-
-  const gridGeometry = getGridGeometry(width, height);
 
   useLayoutEffect(() => {
     const solid: BoardCell[] = [];
@@ -129,19 +147,23 @@ function BoardScene(props: {
       <ambientLight intensity={0.9} />
       <directionalLight position={[-4, 6, 10]} intensity={2.2} />
 
-      <mesh
-        position={[0, 0, -0.55]}
-        material={backplateMaterial}
-        dispose={null}
-      >
-        <planeGeometry args={[width + 0.2, height + 0.2]} />
-      </mesh>
-      <lineSegments
-        position={[0, 0, -0.5]}
-        geometry={gridGeometry}
-        material={gridMaterial}
-        dispose={null}
-      />
+      {showBackplate && (
+        <>
+          <mesh
+            position={[0, 0, -0.55]}
+            material={backplateMaterial}
+            dispose={null}
+          >
+            <planeGeometry args={[width + 0.2, height + 0.2]} />
+          </mesh>
+          <lineSegments
+            position={[0, 0, -0.5]}
+            geometry={getGridGeometry(width, height)}
+            material={gridMaterial}
+            dispose={null}
+          />
+        </>
+      )}
 
       <instancedMesh
         ref={solidRef}

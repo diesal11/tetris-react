@@ -6,6 +6,9 @@ import useTetrisGameState from "../hooks/useTetrisGameState";
 import { initPreviewTetroMatrix } from "../types/TetroMatrix";
 import { TetrominoTypeAndPosition } from "../types/Tetromino";
 
+/** Fits every trimmed piece (the I piece is 4 wide, the rest ≤ 2 tall). */
+const PREVIEW_FRAME = { width: 4, height: 2 };
+
 export default function TetrisGameContainer() {
   const [state] = useTetrisGameState();
 
@@ -54,7 +57,11 @@ export default function TetrisGameContainer() {
           <div className="flex flex-col justify-between gap-5">
             <div className="flex flex-col items-center gap-2 rounded-2xl bg-slate-300 p-6">
               <h1 className="text-center font-bold">Held Tetro</h1>
-              <Board3D view={savedTetroView} />
+              <Board3D
+                view={savedTetroView}
+                frame={PREVIEW_FRAME}
+                showBackplate={false}
+              />
             </div>
 
             <div className="rounded-2xl bg-slate-300 p-6">
@@ -77,7 +84,12 @@ export default function TetrisGameContainer() {
           <div className="flex flex-col items-center gap-6 rounded-2xl bg-slate-300 p-6">
             <h1 className="text-center font-bold">Upcoming Tetros</h1>
             {previewViews.map((view, index) => (
-              <Board3D key={index} view={view} />
+              <Board3D
+                key={index}
+                view={view}
+                frame={PREVIEW_FRAME}
+                showBackplate={false}
+              />
             ))}
           </div>
         </div>

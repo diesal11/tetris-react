@@ -5,8 +5,12 @@ const useKeyEvents = (
   handler: (event: KeyboardEvent) => void,
   repeatDelay = 0,
 ) => {
-  const eventListenerRef = useRef<((ev: KeyboardEvent) => void) | undefined>(undefined);
-  const repeatTimeoutRef = useRef<{ timestamp: number; key: string } | undefined>(undefined);
+  const eventListenerRef = useRef<((ev: KeyboardEvent) => void) | undefined>(
+    undefined,
+  );
+  const repeatTimeoutRef = useRef<
+    { timestamp: number; key: string } | undefined
+  >(undefined);
 
   useEffect(() => {
     eventListenerRef.current = (event) => {
