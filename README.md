@@ -33,6 +33,6 @@ Future features:
   - [x] Wall Kick
   - [x] Floor Kick
 - [x] Handle keyboard & tick logic ourselves
-- [ ] Mobile controls & viewport
+- [x] Mobile controls & viewport
 - [ ] Sound FX / Music
 - [ ] Online Leaderboard, allowing submissions from any client

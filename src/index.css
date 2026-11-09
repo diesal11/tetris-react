@@ -22,3 +22,8 @@
 :root, body, #root {
   height: 100%;
 }
+
+/* No pull-to-refresh or bounce while holding the on-screen controls. */
+body {
+  overscroll-behavior: none;
+}
