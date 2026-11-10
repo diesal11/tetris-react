@@ -14,12 +14,13 @@ Built with:
 
 - [React 19 + Compiler](https://react.dev) (Goodbye useMemo!)
 - [Vite](https://vite.dev) for the build system
+- [React Three Fiber](https://r3f.docs.pmnd.rs) + [Three.js](https://threejs.org) for the WebGL-rendered 3D boards
 - [TailwindCSS](https://tailwindcss.com) for basic CSS styling & animations
 - [Immer](https://immerjs.github.io/immer) for immutable state updates
 - [Prettier](https://prettier.io) for code formatting
 - [ESLint](https://eslint.org) for code linting
 - [TypeScript](https://typescriptlang.org)
-- [PNPM](https://pnpm.io) for package management
+- [Bun](https://bun.sh) for package management
 - [CDK](https://aws.amazon.com/cdk) for deployment to AWS
 
 Future features:
@@ -32,6 +33,6 @@ Future features:
   - [x] Wall Kick
   - [x] Floor Kick
 - [x] Handle keyboard & tick logic ourselves
-- [ ] Mobile controls & viewport
+- [x] Mobile controls & viewport
 - [ ] Sound FX / Music
 - [ ] Online Leaderboard, allowing submissions from any client

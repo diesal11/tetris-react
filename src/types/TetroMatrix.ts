@@ -76,16 +76,54 @@ export function initTetroMatrix(width: number, height: number): TetroMatrix {
   };
 }
 
+/**
+ * A piece's spawn-rotation matrix cropped to its filled cells (I = 4×1,
+ * O = 2×2, the rest 3×2), for the hold and upcoming-piece boxes. No piece
+ * gives an empty 0×0 matrix.
+ */
 export function initPreviewTetroMatrix(type?: TetrominoType): TetroMatrix {
   if (!type) {
-    return initTetroMatrix(3, 4);
+    return initTetroMatrix(0, 0);
   }
 
-  const matrix = getTetrominoMatrix(type);
-  return mergeTetroMatrices(initTetroMatrix(3, 4), matrix, {
-    x: 0,
-    y: 0,
+  return trimTetroMatrix(getTetrominoMatrix(type));
+}
+
+/** Crops a matrix to the bounding box of its non-clear cells. */
+export function trimTetroMatrix(matrix: TetroMatrix): TetroMatrix {
+  let minX = matrix.width;
+  let minY = matrix.height;
+  let maxX = -1;
+  let maxY = -1;
+
+  matrix.cells.forEach((cell, index) => {
+    if (cell === "clear") {
+      return;
+    }
+
+    const x = index % matrix.width;
+    const y = Math.floor(index / matrix.width);
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+    maxX = Math.max(maxX, x);
+    maxY = Math.max(maxY, y);
   });
+
+  if (maxX === -1) {
+    return initTetroMatrix(0, 0);
+  }
+
+  const width = maxX - minX + 1;
+  const height = maxY - minY + 1;
+  const cells = Array.from(
+    { length: width * height },
+    (_, i) =>
+      matrix.cells[
+        (minY + Math.floor(i / width)) * matrix.width + minX + (i % width)
+      ],
+  );
+
+  return { width, height, cells };
 }
 
 export function mergeTetroMatrices(
